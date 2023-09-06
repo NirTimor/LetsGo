@@ -4,7 +4,7 @@ import { months } from '../../../utils';
 import InputField from '../../../components/inputs/InputField';
 import { tripDetailsKeys } from '../../../stores/tripStore';
 import useCountriesAndCities from '../../../hooks/useCountriesAndCities';
-import NumberInput from '../../../components/NumberInput';
+import NumberInput from '../../../components/inputs/NumberInput';
 
 const TripDetailsForm = ({ onChangeInput = () => {}, values }) => {
     const {
@@ -87,7 +87,7 @@ const TripDetailsForm = ({ onChangeInput = () => {}, values }) => {
                         name={tripDetailsKeys.isFlexible}
                         defaultChecked={values[tripDetailsKeys.isFlexible]}
                         color="primary"
-                        onChange={(event) => onChangeInput(event.target.name, event.target.value)}
+                        onChange={(event) => onChangeInput(event.target.name, event.target.checked)}
                     />
                 }
                 sx={{

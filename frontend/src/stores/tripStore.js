@@ -1,7 +1,7 @@
 import React from 'react';
 import { observable, action, makeObservable, computed } from "mobx";
 import FetchStore from './FetchStore';
-import { fetchTrips, likeTrip, unlikeTrip, addComment, deleteComment, createTrip, deleteTrip, addToFavorites, removeFromFavorites, fetchLastFavoriteTrips, editTrip } from '../api/tripApi';
+import { fetchTrips, likeTrip, unlikeTrip, addComment, deleteComment, createTrip, deleteTrip, addToFavorites, removeFromFavorites, editTrip } from '../api/tripApi';
 import authStore from './authStore';
 import alertsStore from './alertsStore';
 import profileStore from './profileStore';
@@ -17,7 +17,11 @@ export const tripDetailsKeys = {
     asc: 'asc',
     details: 'details',
     isFlexible: 'is_flexible',
-    photos: 'photos'
+    photos: 'photos',
+    interests: 'interests',
+    isMale: 'is_male',
+    minAge: 'start_age_range',
+    maxAge: 'end_age_range',
 }
 
 export const DEFAULT_DURATION_DAYS = 7;
@@ -32,6 +36,10 @@ class TripStore {
             [tripDetailsKeys.durationDays]: DEFAULT_DURATION_DAYS,        
             [tripDetailsKeys.asc]: true,
             [tripDetailsKeys.isFlexible]: true,
+            [tripDetailsKeys.interests]: [],
+            [tripDetailsKeys.isMale]: undefined,
+            [tripDetailsKeys.minAge]: 0,
+            [tripDetailsKeys.maxAge]: 99,
         }
 
         this.postDetails = {
@@ -60,8 +68,6 @@ class TripStore {
             removePost: action,
             setDbData: action,
             postsData: computed,
-            setFavoriteTripsData: action,
-            lastFavoriteTripsData: computed,
             resetNewPost: action,
             setPage: action,
             onUpdateTrip: action,
@@ -77,7 +83,8 @@ class TripStore {
             }
             return fetchTrips({
                 page: this.page,
-                ...this.filters
+                ...this.filters,
+                [tripDetailsKeys.interests]: this.filters[tripDetailsKeys.interests].join(','),
             })
         },
         setParsedResponse: false,
@@ -167,6 +174,7 @@ class TripStore {
         fetchApi: (id) => editTrip({ id, ...this.postDetails }),
         onSuccess: ({ response }) => {
             this.setDbData(response.data._id, response.data);
+            profileStore.setData(response.data._id, response.data)
             alertsStore.alert('success', 'Successfully updated trip')
         },
     })
@@ -182,28 +190,12 @@ class TripStore {
         },
     })
 
-    lastFavoriteTrips = new FetchStore({
-        id: 'fetch-favorite-trips',
-        data: new Map(),
-        setParsedResponse: false,
-        fetchApi: () => fetchLastFavoriteTrips(),
-        onSuccess: ({ response }) => {
-            response.data.forEach((post) => {
-                this.setFavoriteTripsData(post._id, post);
-            });
-        },
-    });
-
-    setFavoriteTripsData = (tripId, trip) => {
-        this.lastFavoriteTrips.data.set(tripId, trip);
-    }
-
     setFilters = (filterKey, filterValue) => {
-        this.filters[filterKey] = filterValue;
+        this.filters = { ...this.filters, [filterKey]: filterValue };
     }
 
     setPostDetails = (key, value) => {
-        this.postDetails[key] = value;
+        this.postDetails = { ...this.postDetails, [key]: value }
     }
 
     addLikeToPost = (trip) => {
@@ -264,10 +256,6 @@ class TripStore {
         const data = [...this.db.data.values()];
         const sortedData = data.sort((post1, post2) => new Date(post2.creation_datetime) - new Date(post1.creation_datetime));
         return sortedData;
-    }
-
-    get lastFavoriteTripsData() {
-        return [...this.lastFavoriteTrips.data.values()];
     }
 };
 

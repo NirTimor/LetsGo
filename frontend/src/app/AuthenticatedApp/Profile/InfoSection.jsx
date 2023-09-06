@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { compressToUTF16 } from 'lz-string';
 import { observer } from 'mobx-react';
 import { FileUploader } from 'react-drag-drop-files';
 import { Box, IconButton, Skeleton, colors, Menu, MenuItem } from '@mui/material';
@@ -7,17 +8,20 @@ import Typography from '../../../components/Typography';
 import { IconAndTextWrapper, Async, isEmpty } from '../../../utils';
 import profileStore, { useProfileStore } from '../../../stores/profileStore';
 import useProfileDetails from './useProfileDetails';
-import CarouselModal, { Photo, PhotoWithDelete } from '../../../components/CarouselModal';
+import CarouselModal, { Photo, PhotoWithDelete } from '../../../components/modals/CarouselModal';
 import alertsStore from '../../../stores/alertsStore';
 import ProfilePhoto from '../../../components/ProfilePhoto';
+import List from '../../../components/List';
 
 const InfoItem = ({ itemKey, itemValue }) => {
-    const formattedValue = Array.isArray(itemValue) ? itemValue.join(', ') : itemValue;
+    const formattedValue = Array.isArray(itemValue) ? itemValue : [itemValue];
 
     return (
         <IconAndTextWrapper>
             {itemKey && <Typography bold variant="body2">{itemKey}: </Typography>}
-            <Typography variant="body2">{formattedValue}</Typography>
+            <List valuesToShow={3}>
+                {formattedValue}
+            </List>
         </IconAndTextWrapper>
     )
 };
@@ -35,12 +39,11 @@ const MyProfileInfoItem = ({ infoItem, onEdit }) => {
     }
 
     const onClickCheck = async () => {
-        console.log('value ', infoItem.getBeValue(value));
         await onEdit(infoItem.beKey, infoItem.getBeValue(value));
         setIsEdited(false);
     }
 
-    const formattedValue = Array.isArray(infoItem.value) ? infoItem.value.join(', ') : infoItem.value;
+    const formattedValue = Array.isArray(infoItem.value) ? infoItem.value : [infoItem.value];
 
     return (
         <Box sx={{
@@ -58,7 +61,7 @@ const MyProfileInfoItem = ({ infoItem, onEdit }) => {
                 </>
             ) : (
                 <>
-                    <Typography variant="body2">{infoItem.isExist ? formattedValue : 'Not Available'}</Typography>
+                    <Typography variant="body2">{infoItem.isExist ? <List valuesToShow={3}>{formattedValue}</List> : 'Not Available'}</Typography>
                     {infoItem.isEditable && (
                         <IconButton onClick={() => setIsEdited(true)} sx={{ height: 'fit-content' }}>
                             {EditIcon}
@@ -95,7 +98,7 @@ const ProfilePhotoOther = ({ profilePhoto, photos = [] }) => {
             </Box>
             <CarouselModal open={isModalOpen} onClose={handleCloseModal}>
                 {getPhotos().map((photo) => (
-                    <Photo base64={photo} />
+                    <Photo photo={photo} />
                 ))}
             </CarouselModal>
         </>
@@ -125,7 +128,11 @@ const MyProfilePhoto = ({ profilePhoto, photos }) => {
             setBase64Files([]);
             const fetch = async () => {
                 await profileStore.updateUser.fetch('photos', [...photos, ...base64Files]);
-                alertsStore.alert('success', 'Successfully updated photos!');
+                if (profileStore.updateUser.isError) {
+                    alertsStore.alert('error', 'Something went wrong')
+                } else {
+                    alertsStore.alert('success', 'Successfully updated photo!')
+                }
             } 
             fetch();
         }
@@ -134,12 +141,16 @@ const MyProfilePhoto = ({ profilePhoto, photos }) => {
     const onUploadFile = (file) => {
         handleCloseMenu();
         const reader = new FileReader();
-        // @ts-ignore
         reader.readAsDataURL(file);
         reader.onload = async (event) => {
             const base64File = event.target.result.split(',')[1];
-            await profileStore.updateUser.fetch('profile_photo', base64File);
-            alertsStore.alert('success', 'Successfully updated profile photo!')
+            const compressed = compressToUTF16(base64File);
+            await profileStore.updateUser.fetch('profile_photo', compressed);
+            if (profileStore.updateUser.isError) {
+                alertsStore.alert('error', 'Something went wrong')
+            } else {
+                alertsStore.alert('success', 'Successfully updated profile photo!')
+            }
         };
     };
 
@@ -151,7 +162,8 @@ const MyProfilePhoto = ({ profilePhoto, photos }) => {
             reader.readAsDataURL(file);
             reader.onload = (event) => {
                 const base64File = event.target.result.split(',')[1];
-                setBase64Files((prev) => [...prev, base64File]);
+                const compressed = compressToUTF16(base64File);
+                setBase64Files((prev) => [...prev, compressed]);
             };
         });
     };
@@ -159,13 +171,21 @@ const MyProfilePhoto = ({ profilePhoto, photos }) => {
     const onDeleteProfilePhoto = async () => {
         handleCloseMenu();
         await profileStore.updateUser.fetch('profile_photo', '');
-        alertsStore.alert('success', 'Successfully deleted profile photo!')
+        if (profileStore.updateUser.isError) {
+            alertsStore.alert('error', 'Something went wrong')
+        } else {
+            alertsStore.alert('success', 'Successfully deleted profile photo!')
+        }
     }
 
     const onDeletePhoto = async (_photo) => {
         handleCloseMenu();
         await profileStore.updateUser.fetch('photos', photos.filter((photo) => photo !== _photo));
-        alertsStore.alert('success', 'Successfully deleted photo!')
+        if (profileStore.updateUser.isError) {
+            alertsStore.alert('error', 'Something went wrong')
+        } else {
+            alertsStore.alert('success', 'Successfully deleted photo!')
+        }
     }
 
     const getPhotos = () => {
@@ -206,7 +226,7 @@ const MyProfilePhoto = ({ profilePhoto, photos }) => {
             </Menu>
             <CarouselModal open={isModalOpen} onClose={handleCloseModal}>
                 {getPhotos().map((photo) => (
-                    <PhotoWithDelete base64={photo.photo} onDelete={photo.onDelete} />
+                    <PhotoWithDelete photo={photo.photo} onDelete={photo.onDelete} />
                 ))}
             </CarouselModal>
         </>

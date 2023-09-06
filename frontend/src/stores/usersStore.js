@@ -3,7 +3,7 @@ import React from 'react';
 import { observable, action, makeObservable } from "mobx";
 import FetchStore from './FetchStore';
 import { fetchUser, searchUser } from "../api/usersApi";
-import { isEmpty } from 'lodash';
+import { isEmpty } from '../utils';
 
 class UsersStore {
     constructor() {
@@ -27,7 +27,12 @@ class UsersStore {
     searchUser = new FetchStore({
         id: 'search-user',
         data: [],
-        fetchApi: (name) => searchUser(name),
+        fetchApi: (name) => {
+            if (isEmpty(name)) {
+                return Promise.resolve()
+            }
+            return searchUser(name)
+        },
         parseResponse: (response, name) => {
             if (isEmpty(name)) return [];
             return response.data;

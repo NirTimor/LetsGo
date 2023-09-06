@@ -1,17 +1,15 @@
 import React, { useState } from 'react';
+import { decompressFromUTF16 } from 'lz-string';
 import { Box } from '@mui/material';
 import Typography from './Typography';
-import CarouselModal, { Photo } from './CarouselModal';
-import { isEmpty } from 'lodash';
+import CarouselModal, { Photo } from './modals/CarouselModal';
 
-const PhotosCollage = ({ photos }) => {
+const PhotosCollage = ({ photos = [] }) => {
+    const base64Photos = photos.map((photo) => decompressFromUTF16(photo));
     const [isModalOpen, setIsModalOpen] = useState(false);
-    if (isEmpty(photos)) {
-        return null;
-    }
 
     const renderPhotos = () => {
-        switch (photos.length) {
+        switch (base64Photos.length) {
             case 0:
                 return null;
             case 1:
@@ -22,7 +20,7 @@ const PhotosCollage = ({ photos }) => {
                             cursor: 'pointer'
                         }}
                     >
-                        <img style={{ width: '100%', objectFit: 'cover', maxHeight: '300px' }} src={`data:image/jpeg;base64,${photos[0]}`} />
+                        <img style={{ width: '100%', objectFit: 'cover', maxHeight: '300px' }} src={`data:image/jpeg;base64,${base64Photos[0]}`} />
                     </Box>
                 );
             case 2:
@@ -35,9 +33,9 @@ const PhotosCollage = ({ photos }) => {
                         }}
                     >
                         
-                        <img style={{ width: '50%', objectFit: 'cover', maxHeight: '300px' }} src={`data:image/jpeg;base64,${photos[0]}`} />
+                        <img style={{ width: '50%', objectFit: 'cover', maxHeight: '300px' }} src={`data:image/jpeg;base64,${base64Photos[0]}`} />
                         <Box sx={{
-                            backgroundImage: `url(data:image/jpeg;base64,${photos[1]})`,
+                            backgroundImage: `url(data:image/jpeg;base64,${base64Photos[1]})`,
                             position: 'relative',
                             width: '50%',
                             display: 'flex',
@@ -57,9 +55,9 @@ const PhotosCollage = ({ photos }) => {
                             cursor: 'pointer'
                         }}
                     >
-                        <img style={{ width: '50%', objectFit: 'cover', maxHeight: '300px' }} src={`data:image/jpeg;base64,${photos[0]}`} />
+                        <img style={{ width: '50%', objectFit: 'cover', maxHeight: '300px' }} src={`data:image/jpeg;base64,${base64Photos[0]}`} />
                         <Box sx={{
-                            backgroundImage: `url(data:image/jpeg;base64,${photos[1]})`,
+                            backgroundImage: `url(data:image/jpeg;base64,${base64Photos[1]})`,
                             position: 'relative',
                             width: '50%',
                             opacity: '0.75',
@@ -78,7 +76,7 @@ const PhotosCollage = ({ photos }) => {
                                 backgroundColor: 'rgba(0,0,0,0.25)',
                             }
                         }}>
-                            <Typography variant="h3" bold sx={{ color: 'white', zIndex: '0' }}>+ {photos.length - 2}</Typography>
+                            <Typography variant="h3" bold sx={{ color: 'white', zIndex: '0' }}>+ {base64Photos.length - 2}</Typography>
                         </Box>
                     </Box>
                 )
@@ -90,7 +88,7 @@ const PhotosCollage = ({ photos }) => {
             {renderPhotos()}
             <CarouselModal open={isModalOpen} onClose={() => setIsModalOpen(false)}>
                 {photos.map((photo) => (
-                    <Photo base64={photo} />
+                    <Photo photo={photo} />
                 ))}
             </CarouselModal>
         </>

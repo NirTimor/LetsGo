@@ -10,7 +10,7 @@ import { border } from "../../../utils";
 const Chat = () => {
     const { allChats, openChatMessages, reset } = useChatStore();
     useEffect(() => {
-        allChats.fetch();
+        allChats.poll.init();
         openChatMessages.poll.init();
         return reset;
     }, [])

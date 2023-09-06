@@ -5,93 +5,7 @@ import FetchStore from './FetchStore';
 import { fetchUser, updateUser, fetchPosts, fetchFavoritePosts } from '../api/profileApi';
 import authStore from './authStore';
 import usersStore from './usersStore';
-import { PAGE_SIZE, isEmpty } from '../utils';
-
-export const interestOptions = [
-    { value: 1, label: 'Hiking' },
-    { value: 2, label: 'Cooking' },
-    { value: 3, label: 'Photography' },
-    { value: 4, label: 'Yoga' },
-    { value: 5, label: 'Gardening' },
-    { value: 6, label: 'Reading' },
-    { value: 7, label: 'Painting' },
-    { value: 8, label: 'Singing' },
-    { value: 9, label: 'Dancing' },
-    { value: 10, label: 'Camping' },
-    { value: 11, label: 'Traveling' },
-    { value: 12, label: 'Sports' },
-    { value: 13, label: 'Movies' },
-    { value: 14, label: 'Music' },
-    { value: 15, label: 'Gaming' },
-    { value: 16, label: 'Art' },
-    { value: 17, label: 'Fashion' },
-    { value: 18, label: 'Tech' },
-    { value: 19, label: 'Cars' },
-    { value: 20, label: 'Animals' },
-    { value: 21, label: 'Nature' },
-    { value: 22, label: 'Science' },
-    { value: 23, label: 'Writing' },
-    { value: 24, label: 'Volunteering' },
-    { value: 25, label: 'Fitness' },
-    { value: 26, label: 'DIY Projects' },
-    { value: 27, label: 'Foodie' },
-    { value: 28, label: 'Coding' },
-    { value: 29, label: 'Meditation' },
-    { value: 30, label: 'History' },
-    { value: 31, label: 'Languages' },
-    { value: 32, label: 'Science Fiction' },
-    { value: 33, label: 'Comedy' },
-    { value: 34, label: 'Travelling' },
-    { value: 35, label: 'Adventure' },
-    { value: 36, label: 'Swimming' },
-    { value: 37, label: 'Skiing' },
-    { value: 38, label: 'Running' },
-    { value: 39, label: 'Cycling' },
-    { value: 40, label: 'Baking' },
-    { value: 41, label: 'Exercising' },
-    { value: 42, label: 'Photography' },
-    { value: 43, label: 'History' },
-    { value: 44, label: 'Drawing' },
-    { value: 45, label: 'Sculpting' },
-    { value: 46, label: 'Fishing' },
-    { value: 47, label: 'Chess' },
-    { value: 48, label: 'Video Editing' },
-    { value: 49, label: 'Reading' },
-    { value: 50, label: 'Fashion' },
-];
-
-export const languageOptions = [
-    { value: 'en', label: 'English' },
-    { value: 'fr', label: 'French' },
-    { value: 'es', label: 'Spanish' },
-    { value: 'de', label: 'German' },
-    { value: 'it', label: 'Italian' },
-    { value: 'pt', label: 'Portuguese' },
-    { value: 'ru', label: 'Russian' },
-    { value: 'ja', label: 'Japanese' },
-    { value: 'zh', label: 'Chinese (Simplified)' },
-    { value: 'ko', label: 'Korean' },
-    { value: 'ar', label: 'Arabic' },
-    { value: 'hi', label: 'Hindi' },
-    { value: 'bn', label: 'Bengali' },
-    { value: 'vi', label: 'Vietnamese' },
-    { value: 'tr', label: 'Turkish' },
-    { value: 'nl', label: 'Dutch' },
-    { value: 'sv', label: 'Swedish' },
-    { value: 'fi', label: 'Finnish' },
-    { value: 'pl', label: 'Polish' },
-    { value: 'uk', label: 'Ukrainian' },
-    { value: 'he', label: 'Hebrew' },
-    { value: 'th', label: 'Thai' },
-    { value: 'el', label: 'Greek' },
-    { value: 'no', label: 'Norwegian' },
-    { value: 'hu', label: 'Hungarian' },
-    { value: 'ro', label: 'Romanian' },
-    { value: 'id', label: 'Indonesian' },
-    { value: 'sk', label: 'Slovak' },
-    { value: 'cs', label: 'Czech' },
-    { value: 'ta', label: 'Tamil' },
-];
+import { PAGE_SIZE, isEmpty, interestOptions } from '../utils';
 
 export const tabs = {
     posts: 'Posts',
@@ -134,8 +48,9 @@ class ProfileStore {
         id: 'fetch-user',
         fetchApi: (email) => fetchUser(email),
         onSuccess: ({ response }) => {
-            this.setUser(response.data);
-            usersStore.setUsersData(response.data.email, response.data);
+            const user = response.data;
+            this.setUser(user);
+            usersStore.setUsersData(response.data.email, user);
         },
     });
 
@@ -172,8 +87,10 @@ class ProfileStore {
         id: 'update-user',
         fetchApi: (key, value) => updateUser({ ...this.user, [key]: value }),
         onSuccess: ({ response }) => {
-            this.setUser(response.data);
-            usersStore.setUsersData(response.data.email, response.data);
+            const user = response.data
+            this.setUser(user);
+            authStore.setUser(user);
+            usersStore.setUsersData(response.data.email, user);
         },
     });
 

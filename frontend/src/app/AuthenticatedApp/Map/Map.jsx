@@ -12,7 +12,7 @@ const Map = () => {
                 gap: '20px'
             }}>
                 <MainSection />
-                {/* <RightBar /> */}
+                <RightBar />
             </Box>
         </Page>
     )

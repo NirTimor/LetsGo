@@ -5,7 +5,7 @@ import { observer } from "mobx-react";
 import { FormControlLabel, Checkbox, Link } from "@mui/material";
 import { useAuthStore } from "../../../stores/authStore";
 import InputField from '../../../components/inputs/InputField';
-import Button from "../../../components/buttons/Button";
+import Button from "../../../components/Button";
 import UnauthenticatedTemplate from "../UnauthenticatedTemplate";
 import { requiredFieldRules } from "../formUtils";
 

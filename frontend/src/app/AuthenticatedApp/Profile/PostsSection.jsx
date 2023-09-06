@@ -1,6 +1,6 @@
 import React from "react";
 import { observer } from "mobx-react";
-import Post, { LoadingPost } from "../../../components/post";
+import Post, { LoadingPost } from "../../../components/Post";
 import { useProfileStore } from "../../../stores/profileStore";
 import { Async } from "../../../utils";
 import Typography, { Link } from "../../../components/Typography";

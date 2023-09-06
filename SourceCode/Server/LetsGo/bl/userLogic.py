@@ -70,8 +70,4 @@ def get_user_bl(email):
 def search_users_by_name_bl(name: str):
     search_query = {"name": {"$regex": name, "$options": "i"}}
     found_users = list(user_table.find(search_query))
-    users = []
-    for user_dict in found_users:
-        user_instance = UserRegistrationInfoModel(**user_dict)
-        users.append(user_instance)
-    return users
+    return found_users

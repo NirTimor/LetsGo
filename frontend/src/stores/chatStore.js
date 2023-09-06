@@ -1,10 +1,10 @@
 import React from 'react';
 import dayjs from 'dayjs';
 import { observable, action, computed, makeObservable } from 'mobx';
-import { fetchAllChats, fetchChatByEmails, sendMessage } from '../api/chatApi';
+import { fetchAllChats, fetchChatByEmails, sendMessage, searchUser } from '../api/chatApi';
 import FetchStore from './FetchStore';
 import authStore from './authStore';
-import { getFormattedDate } from '../utils';
+import { getFormattedDate, isEmpty } from '../utils';
 import usersStore from './usersStore';
 
 class ChatStore {
@@ -21,6 +21,7 @@ class ChatStore {
 
     allChats = new FetchStore({
         id: 'all-chat',
+        polling: { enabled: true, interval: 2000, pollOnFail: true, },
         fetchApi: () => fetchAllChats(),
         parseResponse: (response) => {
             const result = {};
@@ -65,6 +66,21 @@ class ChatStore {
                 message: message,
                 isMine: true,
             }])
+        }
+    })
+
+    searchUser = new FetchStore({
+        id: 'search-user',
+        data: [],
+        fetchApi: (name) => {
+            if (isEmpty(name)) {
+                return Promise.resolve()
+            }
+            return searchUser(name)
+        },
+        parseResponse: (response, name) => {
+            if (isEmpty(name)) return [];
+            return response.data;
         }
     })
 

@@ -1,8 +1,8 @@
 import React from 'react';
 import { Box } from '@mui/material';
 import Modal from './Modal';
-import Typography from './Typography';
-import Button from './buttons/Button';
+import Typography from '../Typography';
+import Button from '../Button';
 
 const ActionModal = ({ open, onClose, title, subTitle, onSubmit = () => {}, isLoading }) => {
     return (

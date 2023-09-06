@@ -1,9 +1,14 @@
 import React from 'react';
 import { observer } from 'mobx-react';
-import { Typography, Box, colors } from "@mui/material";
+import { Box, colors, MenuItem, FormControlLabel } from "@mui/material";
 import { useTripStore, tripDetailsKeys } from '../../../stores/tripStore';
-import Button from '../../../components/buttons/Button';
+import Button from '../../../components/Button';
 import TripDetailsForm from './TripDetailsForm';
+import Typography from '../../../components/Typography';
+import { Divider, interestOptions, getBeInterests } from '../../../utils';
+import MultiSelect from '../../../components/inputs/Multiselect';
+import InputField from '../../../components/inputs/InputField';
+import NumberInput from '../../../components/inputs/NumberInput';
 
 const LeftNav = () => {
     const { setFilters, db, setPage, filters } = useTripStore();
@@ -34,11 +39,10 @@ const LeftNav = () => {
         }}>
             <Typography 
                 variant="body1" 
+                bold
                 sx={{
-                    fontWeight: 700,
                     borderBottom: `1px solid ${colors.grey[300]}`,
                     paddingBottom: '7px',
-                    color: 'text.primary'
                 }}
             >
                 Filter by:
@@ -49,6 +53,37 @@ const LeftNav = () => {
                 gap: '15px',
             }}>
                 <TripDetailsForm onChangeInput={onFilter} values={filters} />
+                <Divider />
+                <Typography bold variant="body1">About my partner:</Typography>
+                <MultiSelect 
+                    label="interests" 
+                    onChange={(event) => onFilter(tripDetailsKeys.interests, getBeInterests(event.target.value))} 
+                    options={interestOptions.map((interest) => interest.label)} 
+                />
+                <InputField 
+                    onChange={(event) => onFilter(tripDetailsKeys.isMale, event.target.value)}
+                    size="small" 
+                    label="Gender"
+                    select
+                >
+                    <MenuItem value={undefined}>None</MenuItem>
+                    <MenuItem value={true}>Male</MenuItem>
+                    <MenuItem value={false}>Female</MenuItem>
+                </InputField>
+                <FormControlLabel
+                    sx={{ justifyContent: 'space-between', margin: 0, color: 'text.secondary' }}
+                    componentsProps={{ typography: { variant: 'body1', whiteSpace: 'nowrap', margin: '0 3px' } }}
+                    labelPlacement="start"
+                    control={<NumberInput min={0} max={365} defaultValue={filters[tripDetailsKeys.minAge]} onChange={(event, value) => onFilter(tripDetailsKeys.minAge, value)} />}
+                    label="Min Age"
+                />
+                <FormControlLabel
+                    sx={{ justifyContent: 'space-between', margin: 0, color: 'text.secondary' }}
+                    componentsProps={{ typography: { variant: 'body1', whiteSpace: 'nowrap', margin: '0 3px' } }}
+                    labelPlacement="start"
+                    control={<NumberInput min={0} max={365} defaultValue={filters[tripDetailsKeys.maxAge]} onChange={(event, value) => onFilter(tripDetailsKeys.maxAge, value)} />}
+                    label="Max Age"
+                />
             </Box>
             <Button onClick={onSubmit}>Submit</Button>
         </Box>

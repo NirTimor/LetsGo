@@ -1,16 +1,17 @@
 import React from "react";
+import { compressToUTF16 } from "lz-string";
 import { observer } from "mobx-react";
 import { FileUploader } from 'react-drag-drop-files';
 import InputField from "../../../components/inputs/InputField";
 import { Box, colors } from "@mui/material";
 import TripDetailsForm from "./TripDetailsForm";
-import Modal from "../../../components/Modal";
+import Modal from "../../../components/modals/Modal";
 import { getFormattedDate } from "../../../utils";
 import authStore from "../../../stores/authStore";
 import Typography from "../../../components/Typography";
-import Button from "../../../components/buttons/Button";
+import Button from "../../../components/Button";
 import { useTripStore, tripDetailsKeys } from "../../../stores/tripStore";
-import { Account } from "../../../components/post";
+import { Account } from "../../../components/Post";
 import usersStore from "../../../stores/usersStore";
 import ProfilePhoto from "../../../components/ProfilePhoto";
 import PhotosCollage from "../../../components/PhotosCollage";
@@ -38,7 +39,7 @@ const PostForm = ({ edit: { id, isEdit }, isOpen, setOpen }) => {
             } else {
                 await createTrip.fetch();
             }
-            setOpen(false);
+            onCloseModal();
         }
     };
 
@@ -49,16 +50,19 @@ const PostForm = ({ edit: { id, isEdit }, isOpen, setOpen }) => {
     }
 
     const onUploadImages = (files) => {
-        setPostDetails(tripDetailsKeys.photos, []);
+        let base64Files = [];
         Object.values(files).forEach((file) => {
             const reader = new FileReader();
             reader.readAsDataURL(file);
             reader.onload = (event) => {
                 const base64File = event.target.result.split(',')[1];
-                setPostDetails(tripDetailsKeys.photos, [...postDetails[tripDetailsKeys.photos], base64File]);
+                const compressed = compressToUTF16(base64File);
+                base64Files = [...base64Files, compressed];
+                setPostDetails(tripDetailsKeys.photos, base64Files);
             };
         });
     };
+
 
     return (
         <Modal open={isOpen} onClose={onCloseModal}>

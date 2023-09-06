@@ -1,8 +1,10 @@
 import React from 'react';
+import { decompressFromUTF16 } from 'lz-string';
 import { AccountCircle } from "@mui/icons-material";
 import { isEmpty } from '../utils';
 
 const ProfilePhoto = ({ photo, size, color = 'text.primary' }) => {
+    const base64 = decompressFromUTF16(photo);
     const getSize = () => {
         switch(size) {
             case ('small'):
@@ -17,10 +19,10 @@ const ProfilePhoto = ({ photo, size, color = 'text.primary' }) => {
     }
 
     return (
-        isEmpty(photo) ? (
+        isEmpty(base64) ? (
             <AccountCircle sx={{ color, width: getSize(), height: getSize() }} />
         ) : (
-            <img style={{ width: getSize(), height: getSize(), objectFit: 'cover', borderRadius: '50%' }} src={`data:image/jpeg;base64,${photo}`} />
+            <img style={{ width: getSize(), height: getSize(), objectFit: 'cover', borderRadius: '50%' }} src={`data:image/jpeg;base64,${base64}`} />
         )
     )
 };

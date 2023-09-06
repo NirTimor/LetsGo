@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { observer } from "mobx-react";
 import { Box } from "@mui/material";
-import Post, { LoadingPost } from "../../../components/post";
+import Post, { LoadingPost } from "../../../components/Post";
 import { useTripStore } from "../../../stores/tripStore";
 import { Async } from "../../../utils";
 import Typography, { Link } from "../../../components/Typography";

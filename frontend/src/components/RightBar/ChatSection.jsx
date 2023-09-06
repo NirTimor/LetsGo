@@ -2,10 +2,11 @@ import React from 'react';
 import { useNavigate } from 'react-router';
 import { observer } from 'mobx-react';
 import { Box, colors } from '@mui/material';
-import Typography from '../Typography';
-import ChatListItem, { Divider } from '../chat/ChatListItem';
+import Typography, { Link, RouterLink } from '../Typography';
+import ChatListItem, { Divider } from '../ChatListItem';
 import routesStore from '../../stores/routesStore';
 import { useChatStore } from '../../stores/chatStore';
+import { Async, isEmpty } from '../../utils';
 
 const ChatSection = () => {
     const { sideList, setOpenChatEmail } = useChatStore();
@@ -38,12 +39,17 @@ const ChatSection = () => {
             >
                 Last chats:
             </Typography>
-            {sideList.map((user) => (
-                <>
-                    <ChatListItem name={user.name} email={user.email} lastMsg={user.lastMessage} photo={user.photo} onClick={onChatClick} isSelected={false} />
-                    <Divider />
-                </>
-            ))}
+            <Async
+                isNoData={isEmpty(sideList)}
+                NoDataComponent={<Typography variant="body2" type="secondary" sx={{ marginTop: '10px' }}>No chats to display. <Link><RouterLink to={routesStore.authorizedRoutes.chat.path}>Click here</RouterLink></Link> to start a conversation</Typography>}
+            >
+                {sideList.map((user) => (
+                    <>
+                        <ChatListItem name={user.name} email={user.email} lastMsg={user.lastMessage} photo={user.photo} onClick={onChatClick} isSelected={false} />
+                        <Divider />
+                    </>
+                ))}
+            </Async>
         </Box>
     )
 } 

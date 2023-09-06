@@ -4,11 +4,10 @@ import { MenuItem } from '@mui/material';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { isEmpty, getFormattedDate, getBooleanValue } from '../../../utils';
+import { isEmpty, getFormattedDate, getBooleanValue, interestOptions, languageOptions, getBeDate, getBeLanguages, getBeInterests, getBeGender } from '../../../utils';
 import InputField from '../../../components/inputs/InputField';
 import useCountriesAndCities from '../../../hooks/useCountriesAndCities';
-import { interestOptions, languageOptions } from '../../../stores/profileStore';
-import MultiSelect from '../../../components/Multiselect';
+import MultiSelect from '../../../components/inputs/Multiselect';
 
 const booleanOptions = ['Yes', 'No'];
 
@@ -26,15 +25,7 @@ const getFeInterests = (interests) => interests.map((interest) => interestOption
 
 const getFeLanguages = (languages) => languages.map((lang) => languageOptions.find((option) => option.value === lang).label);
 
-const getBeGender = (gender) => gender === 'Male';
-
 const getBeBooleanValue = (value) => value === 'Yes';
-
-const getBeDate = (date) => dayjs(date).toISOString();
-
-const getBeLanguages = (languages) => languages.map((lang) => languageOptions.find((option) => option.label === lang).value);
-
-const getBeInterests = (interests) => interests.map((interest) => interestOptions.find((option) => option.label === interest).value);
 
 const useProfileDetails = ({ user }) => {
     const { citiesList, countries } = useCountriesAndCities({ country: user.country });
@@ -82,7 +73,7 @@ const useProfileDetails = ({ user }) => {
             getBeValue: getBeDate,
             isExist: true, 
             value: getFormattedDate(user.birthdate), 
-            isEditable: true,
+            isEditable: false,
             EditComponent: EditDatePickerInput
         },
         { 
@@ -123,19 +114,19 @@ const useProfileDetails = ({ user }) => {
         },
         { 
             key: 'Smoke', 
-            beKey: 'smoke',
+            beKey: 'do_smoke',
             getBeValue: getBeBooleanValue,
             isExist: true, 
-            value: getBooleanValue(user.smoke), 
+            value: getBooleanValue(user.do_smoke), 
             isEditable: true,
             EditComponent: ({ onChange, defaultValue }) => renderSelectInput({ onChange, defaultValue, options: booleanOptions })
         },
         { 
             key: 'Drink', 
-            beKey: 'drink',
+            beKey: 'do_drink',
             getBeValue: getBeBooleanValue,
             isExist: true, 
-            value: getBooleanValue(user.drink), 
+            value: getBooleanValue(user.do_drink), 
             isEditable: true,
             EditComponent: ({ onChange, defaultValue }) => renderSelectInput({ onChange, defaultValue, options: booleanOptions })
         },

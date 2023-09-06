@@ -35574,18 +35574,6 @@
         ]
     },
     {
-        "country": "Hashemite Kingdom of Jordan",
-        "cities": [
-            "Amman",
-            "Ar Ramtha",
-            "Farah",
-            "Irbid",
-            "Madaba",
-            "Sahab",
-            "Salt"
-        ]
-    },
-    {
         "country": "Honduras",
         "cities": [
             "Choloma",
@@ -45886,17 +45874,6 @@
         ]
     },
     {
-        "country": "Myanmar [Burma]",
-        "cities": [
-            "Hlaing",
-            "Inya",
-            "Kyauktada",
-            "Mandalay",
-            "Wagan",
-            "Yangon"
-        ]
-    },
-    {
         "country": "Namibia",
         "cities": [
             "Etunda",
@@ -51992,7 +51969,7 @@
         ]
     },
     {
-        "country": "Republic of Lithuania",
+        "country": "Lithuania",
         "cities": [
             "Alytus",
             "Anciskiai",
@@ -52020,7 +51997,7 @@
         ]
     },
     {
-        "country": "Republic of Moldova",
+        "country": "Moldova",
         "cities": [
             "Anenii Noi",
             "Briceni",
@@ -60089,16 +60066,6 @@
             "Zekeriya",
             "Zeytinburnu",
             "Zonguldak"
-        ]
-    },
-    {
-        "country": "U.S. Virgin Islands",
-        "cities": [
-            "Charlotte Amalie",
-            "Christiansted",
-            "Frederiksted",
-            "Kingshill",
-            "St John Island"
         ]
     },
     {

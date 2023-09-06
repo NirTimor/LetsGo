@@ -1,5 +1,5 @@
 import { styled, alpha } from '@mui/material/styles';
-import { InputBase, IconButton, InputAdornment } from '@mui/material';
+import { InputBase, IconButton, InputAdornment, CircularProgress } from '@mui/material';
 import { Search as SearchIcon } from "@mui/icons-material";
 import InputField from './InputField';
 
@@ -31,10 +31,9 @@ export const StyledSearch = styled('div')(({ theme }) => ({
 	},
 }));
 
-const Search = ({ onChange = () => {}, onSend = () => {}, value, ...props }) => (
+const Search = ({ onChange = () => {}, onSend = () => {}, value, isLoading, ...props }) => (
     <InputField
 		id="search"
-		multiline
 		onChange={onChange}
 		sx={{
 			borderRadius: '6px',
@@ -48,11 +47,13 @@ const Search = ({ onChange = () => {}, onSend = () => {}, value, ...props }) => 
 			},
 			endAdornment:
 				<InputAdornment position="end">
-					<IconButton
-						onClick={onSend}
-					>
-						<SearchIcon />
-					</IconButton>
+					{isLoading ? <CircularProgress color="inherit" size={20} sx={{ marginRight: '10px' }} /> : (
+						<IconButton
+							onClick={onSend}
+						>
+							<SearchIcon />
+						</IconButton>
+					)}
 				</InputAdornment>
 		}}
 		{...props}

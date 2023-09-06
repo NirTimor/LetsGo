@@ -4,14 +4,14 @@ import { debounce } from "lodash";
 import { useNavigate } from "react-router-dom";
 import { AppBar, Box, Toolbar, IconButton, Typography, Menu, Container, Tooltip, MenuItem } from "@mui/material";
 import { AccountCircle, DarkModeOutlined as DarkModeOutlinedIcon, WbSunnyOutlined as WbSunnyOutlinedIcon, HomeOutlined as HomeOutlinedIcon, Mail as MailIcon, Map as MapIcon } from "@mui/icons-material";
-import { useDarkModeStore } from "../../stores/darkModeStore";
-import Search from '../inputs/Search';
-import LetsGoLogo from "../LetsGoLogo";
-import authStore from "../../stores/authStore";
-import { RouterLink } from "../Typography";
-import { useUsersStore } from "../../stores/usersStore";
-import ProfilePhoto from "../ProfilePhoto";
-import { isEmpty } from "../../utils";
+import { useDarkModeStore } from "../stores/darkModeStore";
+import Search from './inputs/Search';
+import LetsGoLogo from "./LetsGoLogo";
+import authStore from "../stores/authStore";
+import { RouterLink } from "./Typography";
+import { useUsersStore } from "../stores/usersStore";
+import ProfilePhoto from "./ProfilePhoto";
+import { isEmpty, Async } from "../utils";
 
 const Navbar = () => {
 	const { isDarkMode, setIsDarkMode, mode } = useDarkModeStore();
@@ -25,9 +25,9 @@ const Navbar = () => {
 		navigate(`/profile/${email}`);
     }
 
-	const onChangeSearch = (event) => {
+	const onChangeSearch = async (event) => {
+		await searchUser.fetch(event.target.value);
 		handleOpenSearchMenu(event.target);
-		searchUser.fetch(event.target.value);
 	}
     const debouncedResults = React.useMemo(() => debounce(onChangeSearch, 300), []);
     React.useEffect(() => () => debouncedResults.cancel());
@@ -56,21 +56,30 @@ const Navbar = () => {
 				<Toolbar>
 					<LetsGoLogo />
 					<Box sx={{ flexGrow: 1, maxWidth: '300px', marginLeft: '20px' }}>
-						<Search onChange={debouncedResults} />
+						<Search onChange={debouncedResults} isLoading={searchUser.isLoading} />
 						<Menu
 							sx={{ maxHeight: '300px' }}
 							anchorEl={anchorElSearch}
-							open={Boolean(anchorElSearch) && !searchUser.isLoading && !isEmpty(searchUser.data)}
+							open={Boolean(anchorElSearch)}
 							onClose={handleCloseSearchMenu}
 						>
-							{searchUser.data.map((user) => (
-								<MenuItem key={user.email} onClick={() => onSend(user.email)}>
-									<Box sx={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
-										<ProfilePhoto photo={user.profile_photo} />
-										<Typography textAlign="center">{user.name}</Typography>
-									</Box>
-								</MenuItem>
-							))}
+							<Async
+								isNoData={isEmpty(searchUser.data)}
+								NoDataComponent={(
+									<MenuItem>
+										<Typography textAlign="center">No data</Typography>
+									</MenuItem>
+								)}
+							>
+								{searchUser.data.map((user) => (
+									<MenuItem key={user.email} onClick={() => onSend(user.email)}>
+										<Box sx={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+											<ProfilePhoto photo={user.profile_photo} />
+											<Typography textAlign="center">{user.name}</Typography>
+										</Box>
+									</MenuItem>
+								))}
+							</Async>
 						</Menu>
 					</Box>
 					<Box sx={{ flexGrow: 0, marginLeft: 'auto' }}>

@@ -25,8 +25,8 @@ class UserRegistrationInfoModel(BaseModel):
     do_drink: bool = False
     interests: list[int] = []
     bio: str = ""
-    profile_photo: bytes = bytes()
-    photos: list[bytes] = []
+    profile_photo: str = ""
+    photos: list[str] = []
     ideal_partner_details: str = ""
     future_trips: list[str] = []
     favorite_trips: list[str] = []

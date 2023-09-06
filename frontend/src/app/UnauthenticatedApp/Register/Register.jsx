@@ -8,7 +8,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { useAuthStore } from "../../../stores/authStore";
 import InputField from '../../../components/inputs/InputField';
-import Button from "../../../components/buttons/Button";
+import Button from "../../../components/Button";
 import UnauthenticatedTemplate from "../UnauthenticatedTemplate";
 import useCountriesAndCities from "../../../hooks/useCountriesAndCities";
 import { emailFieldRules, requiredFieldRules } from "../formUtils";

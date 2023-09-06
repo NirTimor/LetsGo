@@ -1,10 +1,10 @@
 import React from "react";
 import { observer } from "mobx-react";
 import { Box, colors } from "@mui/material";
-import Typography from "../Typography";
-import { useDarkModeStore } from "../../stores/darkModeStore";
-import ProfilePhoto from "../ProfilePhoto";
-import { border } from "../../utils";
+import Typography from "./Typography";
+import { useDarkModeStore } from "../stores/darkModeStore";
+import ProfilePhoto from "./ProfilePhoto";
+import { border } from "../utils";
 
 export const Divider = () => (
     <Box sx={{

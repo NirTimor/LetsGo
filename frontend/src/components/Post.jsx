@@ -1,20 +1,20 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { observer } from 'mobx-react';
 import { Box, colors, IconButton, Tooltip, Skeleton, InputAdornment, List, Paper, Modal } from '@mui/material';
-import { PushPin, CalendarMonth, ThumbUpAlt, Forum, ThumbUpOffAlt, Send, Delete, Favorite, FavoriteBorder as Unfavorite } from "@mui/icons-material";
-import Typography from '../Typography';
-import tripStore, { useTripStore } from '../../stores/tripStore';
-import { IconAndTextWrapper, getFormattedDate, capitalizeSentence, getMonthName, getCountryCodeByName } from '../../utils';
-import InputField from '../inputs/InputField';
-import ActionModal from '../ActionModal';
-import { useDarkModeStore } from '../../stores/darkModeStore';
-import { RouterLink, Link } from '../Typography';
-import authStore, { useAuthStore } from '../../stores/authStore';
-import ProfilePhoto from '../ProfilePhoto';
-import usersStore from '../../stores/usersStore';
-import CarouselModal, { Photo } from '../CarouselModal';
-import PhotosCollage from '../PhotosCollage';
-import EditPost from '../../app/AuthenticatedApp/Home/EditPost';
+import { CalendarMonth, ThumbUpAlt, Forum, ThumbUpOffAlt, Send, Delete, Favorite, FavoriteBorder as Unfavorite } from "@mui/icons-material";
+import Typography from './Typography';
+import tripStore, { useTripStore } from '../stores/tripStore';
+import { IconAndTextWrapper, getFormattedDate, capitalizeSentence, getMonthName, CountryFlag } from '../utils';
+import InputField from './inputs/InputField';
+import ActionModal from './modals/ActionModal';
+import { useDarkModeStore } from '../stores/darkModeStore';
+import { RouterLink, Link } from './Typography';
+import authStore, { useAuthStore } from '../stores/authStore';
+import ProfilePhoto from './ProfilePhoto';
+import usersStore from '../stores/usersStore';
+import CarouselModal, { Photo } from './modals/CarouselModal';
+import PhotosCollage from './PhotosCollage';
+import EditPost from '../app/AuthenticatedApp/Home/EditPost';
 
 const LikeIcon = <ThumbUpAlt fontSize="small" color="primary" />;
 
@@ -30,6 +30,7 @@ export const PostLayout = ({ Actions, AccountSection, LocationSection, TimeSecti
         display: 'grid',
         gridGap: '10px',
         overflow: 'auto',
+        maxHeight: '600px',
         position: 'relative',
     }}>
         <Box sx={{
@@ -70,8 +71,7 @@ export const Account = ({ name, email, creationTime, profilePhoto }) => (
 
 export const Location = ({ city, country }) => (
     <IconAndTextWrapper>
-        <img src={`https://flagcdn.com/w20/${getCountryCodeByName(country).toLowerCase()}.png`} />   
-        {/* <PushPin fontSize="small" sx={{ color: colors.red[800] }} /> */}
+        <CountryFlag countryName={country} />
         <Typography variant="body2">{city}, {country}</Typography>
     </IconAndTextWrapper>
 );
@@ -103,11 +103,9 @@ export const LikesAndComments = ({ isLikedTrip, trip, fetchUnlike, fetchLike, se
                     {isLikedTrip ? LikeIcon : UnlikeIcon}
                 </IconButton>
             </Tooltip>
-            <Tooltip disableHoverListener={!trip.liked_users.length} title={<>{trip.liked_users.map((user) => <div>{user}</div>)}</>}>
-                <Link textAlign="center" color="text.primary">
-                    Liked by {trip.likes}
-                </Link>
-            </Tooltip>
+            <Link textAlign="center" color="text.primary">
+                Liked by {trip.likes}
+            </Link>
         </IconAndTextWrapper>
         <IconAndTextWrapper>
             <Tooltip title="Add Comment">
@@ -328,7 +326,7 @@ const Post = ({ trip, showComments, name, photo }) => {
             />
             <CarouselModal open={isPhotosModalOpen} onClose={() => setIsPhotosModalOpen(false)}>
                 {usersStore.getPhotos(trip.user_email).map((photo) => (
-                    <Photo base64={photo} />
+                    <Photo photo={photo} />
                 ))}
             </CarouselModal>
             <ActionModal 
