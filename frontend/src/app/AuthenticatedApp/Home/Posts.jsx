@@ -42,11 +42,19 @@ const Posts = () => {
           </>
         }
         NoDataComponent={
-          <Typography variant="body2">No data to display</Typography>
+          <Typography variant="body2">
+            Sorry, we didn't find any travelers that match your search. Maybe
+            try to be less specific?
+          </Typography>
         }
       >
         {postsData.map((trip) => (
-          <Post trip={trip} showComments={false} name={usersStore.getName(trip.user_email)} photo={usersStore.getProfilePhoto(trip.user_email)} />
+          <Post
+            trip={trip}
+            showComments={false}
+            name={usersStore.getName(trip.user_email)}
+            photo={usersStore.getProfilePhoto(trip.user_email)}
+          />
         ))}
         <Async
           isLoading={isLoading}
@@ -60,7 +68,11 @@ const Posts = () => {
             </>
           }
         >
-          <Link textAlign="center" onClick={() => fetch()} sx={{ marginBottom: '30px' }}>
+          <Link
+            textAlign="center"
+            onClick={() => fetch()}
+            sx={{ marginBottom: "30px" }}
+          >
             Show More
           </Link>
         </Async>
