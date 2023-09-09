@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box } from '@mui/material';
 import Page from '../Page';
-import RightBar from '../../../components/RightBar';
+import RightBar from '../../../components/rightBar';
 import MainSection from './MainSection';
 
 const Map = () => {
