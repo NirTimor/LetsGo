@@ -6,7 +6,7 @@ import Box from '@mui/material/Box';
 import { useProfileStore, tabs } from '../../../stores/profileStore';
 
 const Tabs = () => {
-    const { setTab, tab } = useProfileStore();
+    const { setTab, tab, isMyProfile } = useProfileStore();
 
     const handleChange = (event, newValue) => {
         setTab(newValue);
@@ -19,7 +19,7 @@ const Tabs = () => {
                 onChange={handleChange}
             >
                 <Tab value={tabs.posts} label={tabs.posts} />
-                <Tab value={tabs.favoritePosts} label={tabs.favoritePosts} />
+                {isMyProfile && <Tab value={tabs.favoritePosts} label={tabs.favoritePosts} />}
             </MuiTabs>
         </Box>
     );
